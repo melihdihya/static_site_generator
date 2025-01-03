@@ -64,3 +64,17 @@ def split_nodes(old_nodes, markdown_text_type):
             new_nodes.append(remaining_text_node)
 
     return new_nodes
+
+
+def text_to_textnodes(text):
+    main_node = TextNode(text, TextType.TEXT)
+    nodes_splitted_by_code = split_nodes_delimiter([main_node], "`", TextType.CODE)
+    nodes_splitted_by_bold = split_nodes_delimiter(
+        nodes_splitted_by_code, "**", TextType.BOLD
+    )
+    nodes_splitted_by_italic = split_nodes_delimiter(
+        nodes_splitted_by_bold, "*", TextType.ITALIC
+    )
+    extracted_images = split_nodes(nodes_splitted_by_italic, TextType.IMAGE)
+    extracted_links = split_nodes(extracted_images, TextType.LINK)
+    return extracted_links

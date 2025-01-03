@@ -3,6 +3,7 @@ from src.markdown_parser import (
     extract_markdown_images,
     extract_markdown_links,
     split_nodes,
+    text_to_textnodes,
 )
 from src.textnode import TextNode, TextType
 
@@ -164,3 +165,21 @@ def test_split_nodes_consecutive_markdown():
     assert new_nodes[0].text_type == TextType.LINK
     assert new_nodes[0].url == "https://www.first.dev"
     assert new_nodes[1].url == "https://www.second.dev"
+
+
+def test_text_to_textnodes():
+    input = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+    nodes = text_to_textnodes(input)
+
+    assert nodes == [
+        TextNode("This is ", TextType.TEXT),
+        TextNode("text", TextType.BOLD),
+        TextNode(" with an ", TextType.TEXT),
+        TextNode("italic", TextType.ITALIC),
+        TextNode(" word and a ", TextType.TEXT),
+        TextNode("code block", TextType.CODE),
+        TextNode(" and an ", TextType.TEXT),
+        TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+        TextNode(" and a ", TextType.TEXT),
+        TextNode("link", TextType.LINK, "https://boot.dev"),
+    ]
